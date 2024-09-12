@@ -1,85 +1,61 @@
-CREATE DATABASE EjercicioAlmacen;
-USE EjercicioAlmacen;
+CREATE DATABASE Tienda;
+USE Tienda;
 
-CREATE TABLE modelos
+CREATE TABLE AlmacenProducto
+  (
+    idproducto INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255),
+    descripcion VARCHAR(255),
+    precio DOUBLE
+  );
+  
+DELIMITER //
+DROP PROCEDURE p_Insertar;
+CREATE PROCEDURE p_Insertar
 (
-    idmodelos INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    nombre VARCHAR (255),
-    descripcion VARCHAR (255),
-    create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+    IN _idproducto INT,
+    IN _nombre VARCHAR(255),
+    IN _descripcion VARCHAR(255),
+    IN _precio DOUBLE
+)
+BEGIN
+    DECLARE existe INT;
+    SELECT COUNT(*) INTO existe FROM AlmacenProducto WHERE idproducto = _idproducto;
+    IF existe = 0 THEN
+    INSERT INTO AlmacenProducto (idproducto, nombre, descripcion, precio)
+	 VALUES (_idproducto, _nombre, _descripcion, _precio);
+    END IF;
+END //
+DELIMITER ;
+CALL p_Insertar(NULL, 'Principe', 'Galletas de paquete', 18);
 
-DESCRIBE modelos;
 
-CREATE TABLE migrations
+DELIMITER //
+DROP PROCEDURE p_Eliminar;
+CREATE PROCEDURE p_Eliminar
 (
-    idmigrations INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    migrations VARCHAR (255),
-    batch INT (11)
-);
+    IN _idproducto INT
+)
+BEGIN
+    DELETE FROM AlmacenProducto WHERE idproducto = _idproducto;
+END //
+DELIMITER ;
 
-CREATE TABLE division
-( 
-    iddivision BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    nombre VARCHAR (255),
-    create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+CALL p_Eliminar(1);
 
-CREATE TABLE lugares
-( 
-    idlugares BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    nombre VARCHAR (255),
-    create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
 
-CREATE TABLE estante 
+DELIMITER //
+DROP PROCEDURE IF EXISTS p_Modificar;
+/
+CREATE PROCEDURE p_Modificar
 (
-    idestante BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    nombre VARCHAR (255),
-    create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
-CREATE TABLE nivel
-(
-    idnivel BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    nombre VARCHAR (255),
-    create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
-CREATE TABLE productos
-(
-    idproductos INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    codigo VARCHAR (255),
-    nombre VARCHAR (255),
-    descripción VARCHAR (255),
-    cantidad INT (11),
-    fkidlugar BIGINT (20),
-	 fkidestante BIGINT (20),
-	 fkidnivel BIGINT (20),
-	 fkiddivision BIGINT (20), 
-    FOREIGN KEY (fkidlugar) REFERENCES lugares( idlugares),
-    FOREIGN KEY (fkidestante) REFERENCES estante(idestante),
-    FOREIGN KEY (fkidnivel) REFERENCES nivel(idnivel),
-    FOREIGN KEY (fkiddivision) REFERENCES division(iddivision),
-	 create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  
-);
-
-CREATE TABLE materiales (
-    idmateriales BIGINT  AUTO_INCREMENT PRIMARY KEY,
-    fkidmodelos INT(20),
-    fkidproductos INT(20),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-); 
-
-ALTER TABLE materiales ADD  FOREIGN KEY (fkidmodelos) REFERENCES modelos(idmodelos);
-ALTER TABLE materiales ADD FOREIGN KEY (fkidproductos) REFERENCES productos(idproductos);
-
-
-
+    IN _idproducto INT,
+    IN _nombre VARCHAR(255),
+    IN _descripcion VARCHAR(255),
+    IN _precio DOUBLE
+)
+BEGIN
+   UPDATE AlmacenProducto SET nombre = _nombre, descripcion = _descripcion, precio = _precio WHERE idproducto = _idproducto;
+END //
+DELIMITER ;
+CALL p_Modificar(1, 'Principe', 'Galletas de paquete', 20);
