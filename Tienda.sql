@@ -1,0 +1,85 @@
+CREATE DATABASE EjercicioAlmacen;
+USE EjercicioAlmacen;
+
+CREATE TABLE modelos
+(
+    idmodelos INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    nombre VARCHAR (255),
+    descripcion VARCHAR (255),
+    create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+DESCRIBE modelos;
+
+CREATE TABLE migrations
+(
+    idmigrations INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    migrations VARCHAR (255),
+    batch INT (11)
+);
+
+CREATE TABLE division
+( 
+    iddivision BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    nombre VARCHAR (255),
+    create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE lugares
+( 
+    idlugares BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    nombre VARCHAR (255),
+    create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE estante 
+(
+    idestante BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    nombre VARCHAR (255),
+    create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE nivel
+(
+    idnivel BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    nombre VARCHAR (255),
+    create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE productos
+(
+    idproductos INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    codigo VARCHAR (255),
+    nombre VARCHAR (255),
+    descripción VARCHAR (255),
+    cantidad INT (11),
+    fkidlugar BIGINT (20),
+	 fkidestante BIGINT (20),
+	 fkidnivel BIGINT (20),
+	 fkiddivision BIGINT (20), 
+    FOREIGN KEY (fkidlugar) REFERENCES lugares( idlugares),
+    FOREIGN KEY (fkidestante) REFERENCES estante(idestante),
+    FOREIGN KEY (fkidnivel) REFERENCES nivel(idnivel),
+    FOREIGN KEY (fkiddivision) REFERENCES division(iddivision),
+	 create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  
+);
+
+CREATE TABLE materiales (
+    idmateriales BIGINT  AUTO_INCREMENT PRIMARY KEY,
+    fkidmodelos INT(20),
+    fkidproductos INT(20),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+); 
+
+ALTER TABLE materiales ADD  FOREIGN KEY (fkidmodelos) REFERENCES modelos(idmodelos);
+ALTER TABLE materiales ADD FOREIGN KEY (fkidproductos) REFERENCES productos(idproductos);
+
+
+
